@@ -1,6 +1,7 @@
 var express = require('express');
 var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
+var sessions = require('client-sessions');
 var db = require('./db');
 
 
@@ -54,7 +55,12 @@ app.set('view engine', 'ejs');
 app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
 app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+app.use(sessions({
+  cookieName: 'session',
+  secret: 'GastropubsquidkeffiyehstreetartPBRtousleddisruptroofpartytwitter',
+  duration: 3 * 24 * 60 * 60 * 1000,
+  activeDuration: 24 * 60 * 60 * 1000
+}));
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
@@ -71,13 +77,13 @@ app.get('/login',
   function(req, res){
     res.render('login');
   });
-  
-app.post('/login', 
+
+app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/');
   });
-  
+
 app.get('/logout',
   function(req, res){
     req.logout();
