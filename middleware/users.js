@@ -38,14 +38,12 @@ passport.use(new Strategy(
 // serializing, and querying the user record by ID from the database when
 // deserializing.
 passport.serializeUser(function(user, cb) {
-  cb(null, user._id);
+  delete user.password;
+  cb(null, user);
 });
 
-passport.deserializeUser(function(id, cb) {
-  store.findOne({ _id: new ObjectId(id) }, (err, user) => {
-    if (err) { return cb(err); }
-    cb(null, user);
-  });
+passport.deserializeUser(function(user, cb) {
+  cb(null, user);
 });
 
 module.exports = {
