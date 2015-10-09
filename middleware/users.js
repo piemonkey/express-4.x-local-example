@@ -1,7 +1,16 @@
 var sessions = require('client-sessions');
 var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
-var db = require('../db');
+var mongoClient = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectId;
+
+var store;
+
+var mongoUrl = 'mongodb://localhost:27017/gift-economy';
+
+mongoClient.connect(mongoUrl, (err, db) => {
+  store = db.collection('users'); //TODO figure out shutdown hook
+});
 
 // Configure the local strategy for use by Passport.
 //
@@ -11,7 +20,8 @@ var db = require('../db');
 // will be set at `req.user` in route handlers after authentication.
 passport.use(new Strategy(
   function(username, password, cb) {
-    db.users.findByUsername(username, function(err, user) {
+    store.findOne({ username: username }, (err, user) => {
+    // db.users.findByUsername(username, function(err, user) {
       if (err) { return cb(err); }
       if (!user) { return cb(null, false); }
       if (user.password != password) { return cb(null, false); }
@@ -28,11 +38,11 @@ passport.use(new Strategy(
 // serializing, and querying the user record by ID from the database when
 // deserializing.
 passport.serializeUser(function(user, cb) {
-  cb(null, user.id);
+  cb(null, user._id);
 });
 
 passport.deserializeUser(function(id, cb) {
-  db.users.findById(id, function (err, user) {
+  store.findOne({ _id: new ObjectId(id) }, (err, user) => {
     if (err) { return cb(err); }
     cb(null, user);
   });
