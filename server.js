@@ -41,7 +41,7 @@ app.get('/logout',
   });
 
 app.get('/profile',
-  require('connect-ensure-login').ensureLoggedIn(),
+  userMiddleware.ensureLoggedIn(),
   function(req, res){
     res.render('profile', { user: req.user });
   });

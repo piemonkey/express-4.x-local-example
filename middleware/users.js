@@ -3,6 +3,7 @@ var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
 var mongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
+var ensureLogin = require('connect-ensure-login');
 
 var store;
 
@@ -63,5 +64,6 @@ module.exports = {
     options = options || {};
     options.failureRedirect = options.failureRedirect || '/login';
     return passport.authenticate('local', options);
-  }
+  },
+  ensureLoggedIn: options => ensureLogin.ensureLoggedIn(options)
 }
