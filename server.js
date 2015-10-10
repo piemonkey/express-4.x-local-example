@@ -31,7 +31,7 @@ app.get('/login',
 app.post('/login',
   userMiddleware.authenticate(),
   function(req, res) {
-    res.redirect('/');
+    res.redirect(req.session.returnTo || '/');
   });
 
 app.get('/logout',
