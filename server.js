@@ -29,7 +29,7 @@ app.get('/login',
   });
 
 app.post('/login',
-  userMiddleware.authenticate('local', { failureRedirect: '/login' }),
+  userMiddleware.authenticate(),
   function(req, res) {
     res.redirect('/');
   });

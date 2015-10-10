@@ -59,7 +59,9 @@ module.exports = {
     app.use(passport.initialize());
     app.use(passport.session());
   },
-  authenticate: (strategy, options) => {
-    return passport.authenticate(strategy, options);
+  authenticate: (options) => {
+    options = options || {};
+    options.failureRedirect = options.failureRedirect || '/login';
+    return passport.authenticate('local', options);
   }
 }
