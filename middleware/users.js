@@ -10,7 +10,11 @@ var store;
 var mongoUrl = 'mongodb://localhost:27017/gift-economy';
 
 mongoClient.connect(mongoUrl, (err, db) => {
-  store = db.collection('users'); //TODO figure out shutdown hook
+  if (err) {
+    throw new Error('Unable to connect to MongoDB, exiting\n' + err);
+  }
+  store = db.collection('users');
+  process.on('exit', () => db.close());
 });
 
 // Configure the local strategy for use by Passport.
